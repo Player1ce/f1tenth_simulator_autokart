@@ -123,6 +123,13 @@ public:
         n.getParam("nav_mux_idx", nav_mux_idx);
         add_channel(nav_drive_topic, drive_topic, nav_mux_idx);
 
+        // Keep left controller channel
+        int keep_left_mux_idx;
+        std::string keep_left_drive_topic;
+        n.getParam("keep_left_drive_topic", keep_left_drive_topic);
+        n.getParam("keep_left_mux_idx", keep_left_mux_idx);
+        add_channel(keep_left_drive_topic, drive_topic, keep_left_mux_idx);
+
         // ***Add a channel for a new planner here**
         // int new_mux_idx;
         // std::string new_drive_topic;

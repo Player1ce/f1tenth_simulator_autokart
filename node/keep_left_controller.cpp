@@ -14,7 +14,7 @@
 // for RAND_MAX
 #include <cstdlib>
 
-class RandomWalker {
+class KeepLeftController {
 private:
     // A ROS node
     ros::NodeHandle n;
@@ -33,13 +33,13 @@ private:
 
 
 public:
-    RandomWalker() {
+    KeepLeftController() {
         // Initialize the node handle
         n = ros::NodeHandle("~");
 
         // get topic names
         std::string drive_topic, odom_topic;
-        n.getParam("rand_drive_topic", drive_topic);
+        n.getParam("keep_left_drive_topic", drive_topic);
         n.getParam("odom_topic", odom_topic);
 
         // get car parameters
@@ -50,8 +50,7 @@ public:
         drive_pub = n.advertise<ackermann_msgs::AckermannDriveStamped>(drive_topic, 10);
 
         // Start a subscriber to listen to odom messages
-        odom_sub = n.subscribe(odom_topic, 1, &RandomWalker::odom_callback, this);
-
+        odom_sub = n.subscribe(odom_topic, 1, &KeepLeftController::odom_callback, this);
 
     }
 
@@ -103,8 +102,8 @@ public:
 
 
 int main(int argc, char ** argv) {
-    ros::init(argc, argv, "random_walker");
-    RandomWalker rw;
+    ros::init(argc, argv, "keep_left_controller");
+    KeepLeftController rw;
     ros::spin();
     return 0;
 }
