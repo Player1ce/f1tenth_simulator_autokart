@@ -47,7 +47,7 @@ map_free_threshold: 0.8
 ttc_threshold: 0.01
 
 # Indices for mux controller
-mux_size: 5
+mux_size: 6
 joy_mux_idx: 0
 key_mux_idx: 1
 random_walker_mux_idx: 2

@@ -84,12 +84,22 @@ if(DEFINED CATKIN_DEVEL_PREFIX)
 
   # Add the nodes
   file(GLOB NODE_SRC_FILES node/*.cpp)
-  foreach(_node_file ${NODE_SRC_FILES})
+  foreach(_node_file ${NODE_SRC_FILES} ----------)
+      message(node file: ${_node_file})
       get_filename_component(_node_name ${_node_file} NAME_WE)
       add_executable(${_node_name} ${_node_file})
       target_link_libraries(${_node_name} ${LIBS})
       add_dependencies(${_node_name} f1tenth_simulator_generate_messages_cpp)
   endforeach()
+
+  # Add the nodes
+#  set(myNodeFile node/keep_left.cpp)
+#  message(${myNodeFile})
+#  get_filename_component(_node_name ${myNodeFile} NAME_WE)
+#  add_executable(${_node_name} ${myNodeFile})
+#  target_link_libraries(${myNodeFile} ${LIBS})
+#  add_dependencies(${_node_name} f1tenth_simulator_generate_messages_cpp)
+#
 
   # Install the library
   install(TARGETS ${PROJECT_NAME}
