@@ -63,6 +63,8 @@ private:
     double leftAngle, rightAngle;
     double leftRange, rightRange;
 
+    double ttc_s;
+
 
 
 
@@ -143,12 +145,12 @@ public:
             }
 
             if (min_range == -1) {
-                min_range = range;
-                collision_angle = angle;
+                min_range = range + 1;
             }
-            else if (range < min_range) {
+            if (range < min_range) {
                 min_range = range;
                 collision_angle = angle;
+                ttc_s = ttc;
             }
 
             // if it's small, there's a collision
@@ -215,11 +217,14 @@ public:
         int sign = collision_angle;
         sign = sign / std::abs(sign);
 
+        // attempting to adapt steering using collision data
+//        drive_msg.steering_angle = range / std::abs(ttc_s * 3.5);
         drive_msg.steering_angle = range / 3.0;
+
         drive_msg.steering_angle *= sign * -1;
 
-        ROS_INFO_STREAM("collision angle: " << collision_angle << " steering angle" << drive_msg.steering_angle << "sign: " << sign);
-        ROS_INFO_STREAM("left angle: " << leftAngle << "leftRange: " << leftRange << " rightAngle: " << rightAngle << " rightRange: " << rightRange);
+        ROS_INFO_STREAM("ttc_s: " << ttc_s << " collision angle: " << collision_angle << " steering angle" << drive_msg.steering_angle << " sign: " << sign);
+        ROS_INFO_STREAM("left angle: " << leftAngle << " leftRange: " << leftRange << " rightAngle: " << rightAngle << " rightRange: " << rightRange);
 
         // set drive message in drive stamped message
         drive_st_msg.drive = drive_msg;
