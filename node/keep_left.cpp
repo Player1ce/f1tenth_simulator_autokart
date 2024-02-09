@@ -53,10 +53,15 @@ private:
 
     double collision_angle = 0;
 
+    double left_distance = 0;
+
 //    // for collision logging
 //    std::ofstream collision_file;
 //    double beginning_seconds;
 //    int collision_count=0;
+
+    double leftAngle, rightAngle;
+    double leftRange, rightRange;
 
 
 
@@ -116,6 +121,9 @@ public:
 
         int min_ttc = -1;
         int min_range = -1;
+
+        int pi = 3.1415927;
+
         for (size_t i = 0; i < msg.ranges.size(); i++) {
             double angle = msg.angle_min + i * msg.angle_increment;
             double range = msg.ranges[i];
@@ -124,14 +132,15 @@ public:
             double proj_velocity = state.velocity * cosines[i];
             double ttc = (msg.ranges[i] - car_distances[i]) / proj_velocity;
 
-//            if (min_ttc == -1) {
-//                min_ttc = ttc;
-//                collision_angle = angle;
-//            }
-//            else if (ttc < min_ttc) {
-//                min_ttc = ttc;
-//                collision_angle = angle;
-//            }
+
+            if (std::abs(pi - angle) < (msg.angle_increment - (msg.angle_increment/10.0))) {
+                leftAngle = angle;
+                leftRange = range;
+            }
+            else if (std::abs((-1 * pi) - angle) < msg.angle_increment) {
+                rightAngle = angle;
+                rightRange = range;
+            }
 
             if (min_range == -1) {
                 min_range = range;
@@ -146,28 +155,18 @@ public:
             if ((ttc < ttc_threshold) && (ttc >= 0.0)) {
                 ROS_INFO("Collision detected in keep_left");
 //                    // Send a blank mux and write to file
-//                    collision_helper();
-//
-//                    in_collision = true;
-//
-//                    collision_count++;
-//                    collision_file << "Collision #" << collision_count << " detected:\n";
-//                    collision_file << "TTC: " << ttc << " seconds\n";
-//                    collision_file << "Angle to obstacle: " << angle << " radians\n";
-//                    collision_file << "Time since start of sim: " << (ros::Time::now().toSec() - beginning_seconds) << " seconds\n";
-//                    collision_file << "\n";
                 return;
             }
         }
-        if (collision_angle == 0) {
-            ROS_INFO("perfectly straight");
-        }
-        else if (collision_angle < 0) {
-            ROS_INFO("closest collision is right");
-        }
-        else {
-            ROS_INFO("closest collision is left");
-        }
+//        if (collision_angle == 0) {
+//            ROS_INFO("perfectly straight");
+//        }
+//        else if (collision_angle < 0) {
+//            ROS_INFO("closest collision is right");
+//        }
+//        else {
+//            ROS_INFO("closest collision is left");
+//        }
 
         // if it's gone through all beams without detecting a collision, reset in_collision
         in_collision = false;
@@ -220,6 +219,7 @@ public:
         drive_msg.steering_angle *= sign * -1;
 
         ROS_INFO_STREAM("collision angle: " << collision_angle << " steering angle" << drive_msg.steering_angle << "sign: " << sign);
+        ROS_INFO_STREAM("left angle: " << leftAngle << "leftRange: " << leftRange << " rightAngle: " << rightAngle << " rightRange: " << rightRange);
 
         // set drive message in drive stamped message
         drive_st_msg.drive = drive_msg;
